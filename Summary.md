@@ -216,6 +216,26 @@ window.URL.createObjectURL
 </script>
 ```
 
+```
+//定义主函数，回调函数作为参数
+function A(callback) {
+    callback();  
+    console.log('我是主函数');      
+}
+
+//定义回调函数
+function B(){
+    setTimeout("console.log('我是回调函数')", 3000);//模仿耗时操作  
+}
+
+//调用主函数，将函数B传进去
+A(B);
+
+//输出结果
+我是主函数
+我是回调函数
+```
+
 ### 8.async / await
 
 <https://blog.csdn.net/zhaoxiang66/article/details/81017373>
@@ -230,12 +250,14 @@ function getlist(params){
  
 //async await
 async function getResult(){
+	//await1
     let code = await getCode();
     console.log(code.data.code);
     if(code.data.code == 0){
     var params = {
     code:code.data.code
     }
+    //await2
     let list = await getlist(params);
     console.log(list.data.list);
     }
@@ -243,4 +265,10 @@ async function getResult(){
 getResult();
 
 ```
+
+##### 9.git checkout
+
+返回上一个版本，eg：git checkout .则返回所有版本
+
+
 

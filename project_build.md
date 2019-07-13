@@ -200,3 +200,198 @@ export default new Router({
  }
 ```
 
+#### 7.main.js
+
+存放全局（需要共用）的东西！！！
+
+#### 8.axios（封装在  /src/assets/js/http.js  里面）
+
+axios参数配置
+
+<https://blog.csdn.net/itkingone/article/details/81083597>
+
+axios（项目实战需要用到）
+
+<https://blog.csdn.net/qq_33270001/article/details/82800674>
+
+跨域
+
+<https://blog.csdn.net/u012369271/article/details/72848102>
+
+##### axios二次封装！！！！！！！！！（重点看）
+
+<https://blog.csdn.net/qq_30669833/article/details/81701588>
+
+axios请求超时，配置一些东西
+
+<https://blog.csdn.net/qq_41772754/article/details/88367039>
+
+<https://www.cnblogs.com/hcxy/p/10052465.html>
+
+```
+/***
+ * Created by Simple on 2018/1/14 0014.
+ * Http请求控制器模块
+ */
+ 
+import axios from 'axios';
+import store from '@/store/index';
+import types from '@/store/types';
+import router from '@/router/index';
+import { Loading, Message } from 'element-ui';
+ 
+// axios 配置
+axios.defaults.timeout = 15000;
+// axios.defaults.baseURL = 'http://api.xxx.com/v2/接口地址';
+ 
+// 配置通用请求动画
+let loading = null;
+ 
+axios.interceptors.request.use(config => {
+    console.time('ajax请求耗时');
+    if (store.state.users.token) {
+        config.headers.Authorization = store.getters.token;
+    }
+ 
+    loading = Loading.service({
+        lock: true,
+        text: '拼命加载中...',
+        background: 'rgba(255, 255, 255, .6)'
+    });
+ 
+    return config;
+}, err => {
+    loading.close();
+    return Promise.reject(err);
+});
+ 
+// http response 拦截器
+axios.interceptors.response.use(response => {
+    if (response && response.data) {
+        switch (response.data.code) {
+        case '401':
+                // 401 清除token信息并跳转到登录页面
+            store.commit(types.CLEAR_USER_TOKEN);
+            Message.error({
+                message: '身份过期，请重新登录'
+            });
+ 
+            setTimeout(() => {
+                router.replace({
+                    path: '/login',
+                    name: 'Login',
+                    query: { redirect: router.currentRoute.fullPath }
+                });
+            }, 1200);
+            break;
+                //无权限
+        case '403':
+            router.replace({
+                name: 'noAuth',
+                query: { redirect: router.currentRoute.fullPath }
+            });
+        }
+    }
+    loading.close();
+    console.timeEnd('ajax请求耗时');
+    return response;
+}, error => {
+    if (error.response) {
+        switch (error.response.status) {
+        case '401':
+                // 401 清除token信息并跳转到登录页面
+            store.commit(types.CLEAR_USER_TOKEN);
+            router.replace({
+                name: 'Login',
+                query: { redirect: router.currentRoute.fullPath }
+            });
+            break;
+ 
+            //无权限
+        case '403':
+            router.replace({
+                name: 'noAuth',
+                query: { redirect: router.currentRoute.fullPath }
+            });
+            break;
+        }
+    }
+    loading.close();
+    Message.error({
+        message: '哎呀~ (ಥ﹏ಥ)网络又开小差了,请稍后刷新重试!'
+    });
+    return Promise.reject(error.response.data);
+});
+ 
+export default axios;
+```
+
+#### 9.加密，解密
+
+token的值与后端协商好
+
+```
+export function decrypt(str){ //解密
+    var base64_decode =function(input) {
+        var rv;
+        rv = window.atob(input);
+        rv = escape(rv);
+        rv = decodeURIComponent(rv);
+        return rv;
+    }
+    // var token = 'hcht_2016_kylin';
+    // var token = hex_md5(token);
+    var token="5c322a0f381b67359f6c195453d84052";
+    var str = JSON.parse(base64_decode(str));
+    var str2 = new Array();
+    var index = '';
+    for (var i = 0; i < str.length; i++) {
+        if (i > token.length - 1) {
+            index = token.length - 1;
+        } else {
+            index = i;
+        }
+        str2[i] = String.fromCharCode(str[i] - token[index].charCodeAt());
+    }
+    return base64_decode(str2.join(""));
+};
+
+export function encryption(str){ //加密
+    // str = JSON.stringify(str)
+    var base64_encode =function(input) {
+        var rv;
+        rv = encodeURIComponent(input);
+        rv = unescape(rv);
+        rv = window.btoa(rv);
+        return rv;
+    }
+    // var token = hex_md5('hcht_2016_kylin');
+    var token ="5c322a0f381b67359f6c195453d84052";
+    var str = base64_encode(str);
+    var len = str.length;
+    var data = new Array();
+    var index = 0;
+    for (var i = 0; i < len; i++) {
+        if (i > token.length - 1) {
+            index = token.length - 1;
+        } else {
+            index = i;
+        }
+        data[i] = str[i].charCodeAt() + token[index].charCodeAt();
+    }
+    data = base64_encode('['+data.join(",")+']');
+    var str2 = '{"data":"' + data + '"}';
+    var str3 ={
+        json:str2
+    }
+    return str3;
+}
+```
+
+#### 10.拆组件！！！
+
+单独一个页面作为一个文件夹，有一个主要的页面vue，进行拆分多个组件，每个组件单独建立一个文件（方便维护）
+
+#### 11.组件封装！！！
+
+<https://www.cnblogs.com/lanchar/p/6894167.html>
