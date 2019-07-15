@@ -392,6 +392,40 @@ export function encryption(str){ //加密
 
 单独一个页面作为一个文件夹，有一个主要的页面vue，进行拆分多个组件，每个组件单独建立一个文件（方便维护）
 
-#### 11.组件封装！！！
+#### 11.组件封装（复用 ）！！！
 
 <https://www.cnblogs.com/lanchar/p/6894167.html>
+
+```
+//2.eg: 封装一个  slid  组件
+
+```
+
+//1.组件的目录结构
+
+![1003652-20170523142230570-875831353](F:\technical_summary\img\1003652-20170523142230570-875831353.png)
+
+//2.代码上面
+
+// 3.  在index.js 注册该组件，然后暴露出来
+
+![](F:\technical_summary\img\1003652-20170523143329851-457728350.png)
+
+//4.在main.js
+
+```
+import sjld from './components/sjld/index.js'
+
+Vue.use(sjld);
+```
+
+//5.项目当中任意使用
+
+```
+<sjld :citys="citys" :sheng="sheng" @change="change"></sjld>
+
+citys ,cheng 对应组件中 props 
+
+chang 对应组件中$emit的方法
+```
+
