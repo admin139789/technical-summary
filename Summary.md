@@ -270,5 +270,11 @@ getResult();
 
 返回上一个版本，eg：git checkout .则返回所有版本
 
+##### 10.背景图片不适应
 
+
+
+##### 11.props接受参数设置属性，限制传参属性
+
+![](F:\technical_summary\img\捕获.PNG)
 

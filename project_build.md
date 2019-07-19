@@ -429,3 +429,35 @@ citys ,cheng 对应组件中 props
 chang 对应组件中$emit的方法
 ```
 
+#### 12.rem ！！！
+
+```
+//  index.html 引入
+
+
+		<!-- 自动计算根字体大小的脚本--> 
+		<script> 
+			
+            //安卓的输入法虚拟键盘会影响body的高度，所以在加载时，
+            //将body的原本高度给固定住
+            document.body.style.height = window.innerHeight + "px";
+            /*动态改变根元素字体大小*/
+            function recalc() {
+            var clientWidth = document.documentElement.clientWidth;
+            if(!clientWidth) return;
+            document.documentElement.style.fontSize = 40 * (clientWidth / 750) + 'px';
+            // 字体大小   = 1个rem单位表示多少个像素（设备的宽度   /设计宽度）
+            }
+
+            function initRecalc() {
+            recalc();
+            var resizeEvt = 'osrientationchange' in window ? 'orientationchange' :       			'resize';
+            if(!document.addEventListener) return;
+            window.addEventListener(resizeEvt, recalc, false);
+            document.addEventListener('DOMContentLoaded', recalc, false);
+            }
+            initRecalc();
+			
+		</script>
+```
+
