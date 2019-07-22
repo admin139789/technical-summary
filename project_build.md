@@ -461,3 +461,235 @@ chang 对应组件中$emit的方法
 		</script>
 ```
 
+#### 13.vue proxy  代理问题
+
+##### <https://www.cnblogs.com/ldlx-mars/p/7816316.html>
+
+<https://www.jb51.net/article/144028.htm>
+
+#### 14.destory销毁问题
+
+<https://www.cnblogs.com/woniubushinide/p/9282560.html>
+
+![](F:\technical_summary\img\setTimeout.png)
+
+```
+    //销毁定时器
+    destroySwipers() {
+        if (this.swiper1) {
+        this.swiper1.destroy();
+        this.swiper1 = null;
+        }
+        if (this.swiper2) {
+        this.swiper2.destroy();
+        this.swiper2 = null;
+        }
+        if (this.swiper3) {
+        this.swiper3.destroy();
+        this.swiper3 = null;
+        }
+    }
+    destroyed() {
+        this.destroySwipers();
+  	}
+```
+
+这样就不用每次都写this.timer1=null;this.timer2=null;this.timer3=null............................................
+
+#### 15.上拉刷新，下拉加载更多
+
+```
+<template>
+  <div class="priceresult">
+    <main>
+      <div class="toloadmore" stryle='height:100%' ref='toloadmore'>
+        <scroller use-pullup :pullup-config="pullupDefaultConfig" @on-pullup-			         loading="loadMore"
+        use-pulldown :pulldown-config="pulldownDefaultConfig" @on-pulldown-        				loading="refresh"  
+        lock-x ref="scrollerBottom" height="-48"          					 	 	 			:style='{display:listdata.length!=0?"block":"none"}'
+        >
+          <div class='scrollWrapper'  ref='scrollwrapper'>
+            <ul class="taskul wrapper" ref='taskul'>
+            <!-- 数据展示 -->
+              <li
+                v-for="(item,idx) in listdata"
+                :key="idx"
+                :class="{caiheight:name.indexOf('六合彩')!=-1,liData:true}"
+                style='height: 70px;'
+              > 
+              </li>
+            </ul>
+          </div>
+        </scroller>
+      </div>
+    </main>
+  </div>
+</template>
+<script>
+import { Scroller,XHeader } from "vux";
+const pulldownDefaultConfig = {
+   content: '下拉刷新',
+   height: 40,
+   autoRefresh: false,
+   downContent: '下拉刷新',
+   upContent: '释放后刷新',
+   loadingContent: '正在刷新...',
+   clsPrefix: 'xs-plugin-pulldown-'
+   };
+   const pullupDefaultConfig = {
+   content: '上拉加载更多',
+   pullUpHeight: 60,
+   height: 40,
+   autoRefresh: false,
+   downContent: '释放后加载',
+   upContent: '上拉加载更多',
+   loadingContent: '加载中...',
+   clsPrefix: 'xs-plugin-pullup-'
+ };
+export default {
+  components: {
+    Scroller
+  },
+  props: ["par"],
+  data() {
+    return {
+      name: "",
+      type:'',
+      listdata: [],
+      pagenum: 1,
+      allLoaded: false, //数据是否加载完毕
+      bottomStatus: "", //底部上拉加载状态
+      wrapperHeight: 0, //容器高度
+      topStatus: "", //顶部下拉加载状态
+      page:1,
+      list_length: "",
+      pullupDefaultConfig: pullupDefaultConfig,
+      pulldownDefaultConfig: pulldownDefaultConfig
+    };
+  },
+  created() {
+    // 进入页面初始化
+    this.datainit();
+  }
+  methods: {
+  	// 下拉刷新
+    refresh() {
+      this.pagenum = 1;
+      this.datainit();
+    },
+    //上拉加载更多
+    loadMore() {
+      this.pagenum += 1;
+      this.datainit();
+    },
+    // 数据请求
+    datainit() {
+      let type = this.$route.query.lottery_type;
+      var date_res = this.formatDate(new Date());
+      var params = {
+        token: localStorage.getItem("token"),
+        page: this.pagenum,
+        lottery_type: type,
+        date: date_res
+      };
+
+      this.$Indicator.open();
+
+      this.$axios
+        .post("/index.php/index.php?m=api&c=openAward&a=dataList", params)
+        .then(res => {
+          if (res.status == 0) {
+            this.$Indicator.close();
+            if (this.pagenum == 1) {
+              let { list } = res;
+              this.list_length = list.length;
+              if (this.listdata.length <= this.list_length) {
+                this.listdata = list;
+              }
+              this.$refs.scrollerBottom.enablePullup()
+              this.$refs.scrollerBottom.donePulldown()
+
+              this.handleTopChange("loadingEnd"); //数据加载完毕 修改状态码
+            } 
+            /*******************pagenum >1上拉加载******************************/
+            else {
+              let { list } = res;
+              this.listdata = this.listdata.concat(list);
+              this.handleBottomChange("loadingEnd"); //数据加载完毕 修改状态码;
+              if (list.length < this.list_length) {
+                this.allLoaded = true; //模拟数据加载完毕 禁用上拉加载
+                this.$Toast("没有更多了！", "icon_fail");
+                this.$refs.scrollerBottom.disablePullup();
+              }
+              this.$refs.scrollerBottom.donePullup()
+            }            
+          } else {
+            this.$Toast("请求失败");
+          }
+          // 初始化获取节点(ref)
+          this.getContentHeight()
+        })
+        .catch(err => {
+          console.log(err);
+          this.$Toast("请求有误");
+        });
+    },
+    //初始化获取内容高度
+    getContentHeight(){
+      // 方法1
+      this.$nextTick(() => {
+        var scrollWrapper =document.querySelector('.scrollWrapper')
+        var xsPluginPullupContainer =document.querySelector('.xs-plugin-pullup- 		 	  	 container')
+        if(xsPluginPullupContainer){
+          if(scrollWrapper.offsetHeight>document.documentElement.clientHeight){
+            xsPluginPullupContainer.style.display='block';
+          }
+          else{
+            xsPluginPullupContainer.style.display='none';
+          }
+        }  
+      })
+      // 方法2
+      // setTimeout(()=>{
+      //   var liData =document.querySelectorAll('li')
+      // },2000)
+    }
+  }
+};
+</script>
+```
+
+#### 16.VUEX
+
+```
+//  promise
+请求接口完之后，成功之后需要手动写入  resolve（res）函数 ,然后再使用 then的方法 ，通过resolve传参传到then里面接收，然后进行一系列的操作
+```
+
+```
+// 映射
+1.先引入
+import { mapGetters, mapActions ,mapMutions} from "vuex"
+2.映射到computed中
+computed: {
+    ...mapGetters([
+      "roomData",
+      "userInfo",
+      "accountData",
+      "serTime",
+      "lotRstData"
+    ]),
+    ...mapActions([/*解构*/ ]),
+    ...mapMutions([/*解构*/ ]),
+}
+```
+
+```
+//  mutations
+
+```
+
+```
+// actions
+
+```
+
