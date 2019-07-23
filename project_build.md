@@ -658,7 +658,9 @@ export default {
 </script>
 ```
 
-#### 16.VUEX
+#### 16.VUEX（看官网）
+
+<https://vuex.vuejs.org/zh/>
 
 ```
 //  promise
@@ -685,11 +687,26 @@ computed: {
 
 ```
 //  mutations
+this.$store.commit()
 
+1.修改state的值
+	（1）mutation的方法()
+	setRoomData(state, payload) {
+        state.roomData = payload
+    }
+    （2）修改对象里面的值
+    var obj = this.roomData
+    obj.show_hezhi=this.zon
+    this.$store.commit('setRoomData',obj)
+    或者
+    this.$store.state.roomData = { ...state.roomData,show_hezhi:this.zon }
+    或者
+    Vue.set(roomData, 'show_hezhi'：this.zon),
 ```
 
 ```
 // actions
+this.$store.dispatch()
 
 ```
 
