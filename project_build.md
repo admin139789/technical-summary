@@ -707,6 +707,77 @@ this.$store.commit()
 ```
 // actions
 this.$store.dispatch()
+1.actions.js
+SET_USER_INFO_DATA: ({ commit }, { Obj }) => {
+	
+    if (!localStorage.getItem("token") || localStorage.getItem("token") && 		   			JSON.stringify(Obj) != "{}") {
+            commit(types.SET_USER_INFO_DATA, Obj);
+            return false;
+        }
+        //处理异步请求的
+        return new Promise((resolve) => {
+            axios.post(axios.defaults.baseURL + '?m=api&c=user&a=userInfo', { 'token': 				localStorage.getItem("token") }).then(function (res) {
+                commit(types.SET_USER_INFO_DATA, res.data);
+                //一定要执行成功的回调！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+                  resolve(res);
+            })
+            .catch(error => {
+                commit(types.SET_USER_INFO_DATA, {status:-1, err:'获取用户信息失败,请刷新页面  				  重新获取'});
+            });
+        })
+    },
+ 
+2.调用
+返回promise ===> promise.then
+(变量a也是promise对象!!!)var a = this.$store.dispatch('SET_USER_INFO_DATA').then(res=>{
+	console.log('处理promise对象返回的结果111111111111111',res)
+})
+.catch(function(error){
+	console.log(error)
+});
 
+
+```
+
+```
+action  异步变同步
+actions: {
+  actionA ({ commit }) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        commit('someMutation')
+        resolve()
+      }, 1000)
+    })
+  }，
+  actionB ({ dispatch, commit }) {
+    return dispatch('actionA').then(() => {
+      commit('someOtherMutation')
+    })
+  }
+}
+```
+
+```
+// 假设 getData() 和 getOtherData() 返回的是 Promise
+
+actions: {
+  async actionA ({ commit }) {
+    commit('gotData', await getData())
+  },
+  async actionB ({ dispatch, commit }) {
+    await dispatch('actionA') // 等待 actionA 完成
+    commit('gotOtherData', await getOtherData())
+  }
+}
+```
+
+#### 17.移动端调试工具
+
+先下载插件再引入代码 
+
+```
+import VConsole from 'vconsole'
+var vConsole = new VConsole();
 ```
 
