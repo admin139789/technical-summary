@@ -36,6 +36,10 @@ computed: {
 }
 ```
 
+![](F:\technical_summary\img\commputed.PNG)
+
+// 用在input里，  get 和 set
+
 #### 4.transitionName(路由切换滑动效果)
 
 ```
@@ -662,6 +666,8 @@ export default {
 
 <https://vuex.vuejs.org/zh/>
 
+<https://blog.csdn.net/wopelo/article/details/80285167>
+
 ```
 //  promise
 请求接口完之后，成功之后需要手动写入  resolve（res）函数 ,然后再使用 then的方法 ，通过resolve传参传到then里面接收，然后进行一系列的操作
@@ -762,8 +768,8 @@ actions: {
 // 假设 getData() 和 getOtherData() 返回的是 Promise
 
 actions: {
-  async actionA ({ commit }) {
-    commit('gotData', await getData())
+  async actionA ({ commit }/context) {
+    context.commit/(解构)commit('gotData', await getData())
   },
   async actionB ({ dispatch, commit }) {
     await dispatch('actionA') // 等待 actionA 完成
@@ -771,6 +777,14 @@ actions: {
   }
 }
 ```
+
+action中的context
+
+![](F:\technical_summary\img\action.PNG)
+
+##### vuex 项目结构处理
+
+<https://vuex.vuejs.org/zh/guide/structure.html>
 
 #### 17.移动端调试工具
 

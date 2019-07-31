@@ -170,6 +170,8 @@ window.URL.createObjectURL
 
 <https://blog.csdn.net/SummerJX/article/details/81948818>
 
+![](F:\technical_summary\img\123捕获.PNG)
+
 ```
 <script>
 		function runAsync1(){
@@ -207,14 +209,27 @@ window.URL.createObjectURL
 		.then(function(data){
 			console.log(data);
 			return runAsync2();
+		},function(error){
+			console.log(error) //抛出错误
 		})
 		.then(function(data){
 			console.log(data);
 			return '链式调用';  //这里直接返回数据
+		},function(error)}{
+			console.log(error) //抛出错误
 		})
 		.then(function(data){
 			console.log(data);
+		},function(error)}{
+			console.log(error) //抛出错误
 		});
+		
+		//抛出有错误的可能
+		最后写  .done(function (onFulfilled, onRejected) {
+            this.then(onFulfilled, onRejected).catch(function (reason) {
+            //抛出一个全局错误
+            setTimeout(() => {throw reason },0);
+     	});
 </script>
 ```
 
