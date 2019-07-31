@@ -289,9 +289,39 @@ getResult();
 
 ##### 10.背景图片不适应
 
-
+```
+background-size:100% 100% ;
+```
 
 ##### 11.props接受参数设置属性，限制传参属性
 
 ![](F:\technical_summary\img\捕获.PNG)
+
+#####  12.替代*号
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>测试他们的代码</title>
+</head>
+<body>
+<script>
+	var reg = /^(.).+$/g;
+	var str = "五gas";
+	console.log('姓名的长度',str.length);
+	var star= '';
+	if(str.length>1){
+		for(var i=0;i<str.length-1;i++){
+			star += '*';
+		}
+	}
+	console.log('star',star.length,star)
+	var res = str.replace(reg, "$1"+star);
+	document.write('正则匹配成 **** <br/>'+res)
+</script>
+</body>
+</html>
+```
 

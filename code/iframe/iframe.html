@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>自适应的一些函数</title>
+</head>
+<body>
+<!-- 自适应 -->
+<script>
+    //菜单滚动条   窗口缩放变化    
+    autoAdaptWidth();
+    autoAdaptHeigth();
+    window.onresize = function () {
+        console.log('窗口发生了变化')
+        // console.log('监听变化', $('iframe'), $('.leftnav').width(), document.body.clientWidth)
+        autoAdaptWidth();
+        autoAdaptHeigth();
+    }
+    function autoAdaptWidth() {
+        var selfAdaptWidth = document.body.clientWidth - $('.leftnav').width()
+        var cilentwidth = document.body.clientWidth;
+        // var selfAdaptWidth = window.screen.width- $('.leftnav').width()
+        // var cilentwidth = window.screen.width;
+        // console.log('selfAdaptWidth11111111111', selfAdaptWidth, cilentwidth, selfAdaptWidth / cilentwidth * 100 + '%')
+        $('iframe').css('width', selfAdaptWidth)
+    }
+    function autoAdaptHeigth() {
+        var h = $(window).height() - 100;
+        h += "px";
+        $("iframe").css("height", h);
+    }
+    $('.leftnav').on('click', function () {
+        autoAdaptWidth();
+        autoAdaptHeigth();
+    })
+</script>
+<!--判断设备移动设备还是pc设备  -->
+<script>
+    // 判断设备
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        mobileCss();
+        console.log('属于移动设备')
+        $('.leftnav').on('click', function () {
+            console.log(888999)
+            $('iframe').css('width', document.documentElement.clientWidth + 'px');
+        })
+    } else {
+        console.log('属于pc端')
+        $('.siteTreeMobile').addClass('layui-hide');
+    }
+</script>
+<!-- iframe全屏 -->
+<script>
+    // iframe全屏
+    var isok = true;
+    $('.admin-side-toggle').on('click', function () {
+        console.log(666666, $('.admin-body'))
+        if (isok) {
+            $('.admin-body').removeClass('left-two')
+            $('.admin-body').addClass('left-zero')
+            $('.admin').removeClass('adminWidth')
+            $('.admin').css('width', '100%')
+            $('iframe').css('width', document.body.clientWidth + 'px')
+        }
+        else {
+            $('.admin-body').removeClass('left-zero')
+            $('.admin-body').addClass('left-two')
+            $('.admin').addClass('adminWidth')
+            autoAdaptWidth();
+        }
+        isok = !isok;
+
+    })
+
+    // 模拟按下F11全屏
+    var oBtnFullOpen = document.getElementById('BtnFullOpen');
+    var oBtnFullQuite = document.getElementById('BtnFullQuite');
+    var oContent = document.getElementById('Content');
+    oBtnFullOpen.onclick = function () {
+        fullScreen(oContent);
+        oBtnFullQuite.setAttribute("style", "display:block");
+        oBtnFullOpen.setAttribute("style", "display:none");
+    }
+    // var oBtnFullQuite = document.getElementById('BtnFullQuite');
+    // oBtnFullQuite.onclick = function () {
+    //     exitFullScreen(oContent);
+    //     oBtnFullQuite.setAttribute("style", "display:none");
+    //     oBtnFullOpen.setAttribute("style", "display:block");
+    // };
+    function fullScreen(el) {
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen,
+            wscript;
+
+        if (typeof rfs != "undefined" && rfs) {
+            rfs.call(el);
+            return;
+        }
+
+        if (typeof window.ActiveXObject != "undefined") {
+            wscript = new ActiveXObject("WScript.Shell");
+            if (wscript) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+
+    function exitFullScreen(el) {
+        var el = document,
+            cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.mozCancelFullScreen || el.exitFullScreen,
+            wscript;
+
+        if (typeof cfs != "undefined" && cfs) {
+            cfs.call(el);
+            return;
+        }
+
+        if (typeof window.ActiveXObject != "undefined") {
+            wscript = new ActiveXObject("WScript.Shell");
+            if (wscript != null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+</script>
+<!-- 首页鼠标右键模块 -->
+<div class="admin-contextmenu" id='menu'
+    style="width: 130px; background-color: white; top: 70px; left: 298px;display:none;position:absolute">
+    <ul>
+        <li data-target="refresh" title="刷新当前选项卡" class='owndefined ' id='torefresh'>
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+            刷新
+        </li>
+        <li data-target="closeCurrent" title="关闭当前选项卡" class='owndefined ' id='closeCurrent'>
+            <i class="fa fa-close" aria-hidden="true"></i>
+            关闭当前
+        </li>
+        <li data-target="closeOther" title="关闭其他选项卡" class='owndefined ' id='closeOther'>
+            <i class="fa fa-window-close-o" aria-hidden="true"></i>
+            关闭其他
+        </li>
+        <li data-target="closeAll" title="关闭全部选项卡" class='owndefined ' id='closeAll'>
+            <i class="fa fa-window-close-o" aria-hidden="true"></i>
+            全部关闭
+        </li>
+    </ul>
+</div>
+<!-- 首页鼠标右键模块js功能  -->
+<script>
+    $('#min_title_list li').eq($('#min_title_list li').length - 1).addClass('active')
+    var menu = document.getElementById('menu'); //找到id为box的div
+    var currrentLi = '';
+    var currentIndex = '';
+    document.body.onmouseup = function (e) {     //在body里点击触发事件
+
+        // 选中元素
+        if (e.button === 2 && e.target.className != 'owndefined' && e.target.className != 'home') {
+            document.oncontextmenu = function () { return false };//禁止鼠标右键菜单显示
+            //如果button=1（鼠标左键），button=2（鼠标右键），button=0（鼠标中间键）
+            if (e.target.tagName == 'LI' || e.target.tagName == 'SPAN') {
+                if ($('#min_title_list li').length > 1) {
+                    menu.style.display = 'block'; //显示右键自定义菜单
+                }
+                menu.style.top = e.pageY + 'px';     //鼠标点击时给div定位Y轴
+                menu.style.left = e.pageX + 'px';    //鼠标点击时给div定位X轴
+                if (e.target.tagName == 'SPAN') {
+                    currentLi = e.target.parentElement;
+                    console.log($(this).find(currentLi).index(), '$(this)')
+                    currentIndex = $(this).find(currentLi).index()
+
+                }
+                else if (e.target.tagName == 'LI') {
+                    currentLi = e.target;
+                    console.log($(this).find(currentLi).index(), '$(this)')
+                    currentIndex = $(this).find(currentLi).index()
+
+                }
+            }
+        } else {
+            // document.oncontextmenu = function(){return true};
+            if (e.target.className != 'owndefined' && e.target.className != 'home') {
+                menu.style.display = 'none'; //隐藏右键自定义菜单
+
+            }
+            else {
+                document.oncontextmenu = function () { return true };
+            }
+        }
+        if (e.button === 1) {
+            console.log(e.target, 'zuojian')
+        }
+    }
+    // 点击自定义菜单
+    $('#menu').on('click', function (ev) {
+        console.log('点击菜单某一项！！！！！！！', $('#min_title_list'), ev.target, ev.target.className, 'currentLi', currentLi)
+        if (ev.target.id == 'torefresh') {
+            console.log('要进行刷新', $('.admin .show_iframe').eq(currentIndex).children('iframe')[0].contentWindow)
+            $('.admin .show_iframe').eq(currentIndex).children('iframe')[0].contentWindow.location.reload();
+        }
+        else if (ev.target.id == 'closeCurrent') {
+            console.log('删除当前')
+            if (currentIndex != 0) {
+                $('#min_title_list li').eq(currentIndex).remove();
+                $('.admin .show_iframe').eq(currentIndex).remove();
+                $('#min_title_list li').eq($('#min_title_list li').length - 1).addClass('active')
+                $('.admin .show_iframe').eq($('.admin .show_iframe').length - 1).css('display', 'block')
+            }
+        }
+        else if (ev.target.id == 'closeOther') {
+            console.log('删除其他')
+            $('#min_title_list li').eq(0).addClass('retain')
+            $('#min_title_list li').eq(currentIndex).addClass('retain')
+            $('.admin .show_iframe').eq(0).addClass('retain')
+            $('.admin .show_iframe').eq(currentIndex).addClass('retain')
+
+            $('#min_title_list li').not(".retain").each(function () {
+                $(this).remove();
+            })
+            $('.admin .show_iframe').not(".retain").each(function () {
+                $(this).remove();
+            })
+            $('#min_title_list li').eq($('#min_title_list li').length - 1).addClass('active')
+            $('.admin .show_iframe').eq($('.admin .show_iframe').length - 1).css('display', 'block')
+            $('#min_title_list li').removeClass('retain')
+
+        }
+        else if (ev.target.id == 'closeAll') {
+            $('#min_title_list li').not(".home").each(function () {
+                $(this).remove();
+            })
+            $('#min_title_list .home').addClass('active')
+            console.log('删除所有')
+            $('.admin .show_iframe').not(".home_iframe").each(function () {
+                $(this).remove();
+                $('.admin .show_iframe').css('display', 'block')
+            })
+            $('#min_title_list li').eq($('#min_title_list li').length - 1).addClass('active')
+
+        }
+    })
+    $("#hidden_msg").on("click", function () {
+        var obj = $(this);
+        obj.parent().remove();
+        if ($("#info_boxs li").length == 0) {
+            $("#info_boxs").css("display", "none");
+        }
+        $("#play").attr("src", "");
+    });
+</script>
+
+</body>
+</html>
