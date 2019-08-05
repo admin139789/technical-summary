@@ -16,6 +16,11 @@
 
 #### 2.assets / static  区别
 
+```
+记住！！！！！
+不管是 assets还是static ，如果是遍历出来的，一定要assets！！！
+```
+
 
 
 

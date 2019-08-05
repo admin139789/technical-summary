@@ -325,3 +325,14 @@ background-size:100% 100% ;
 </html>
 ```
 
+##### 13.vux  刷新
+
+```
+import { Spinner } from "vux";
+components: {
+    Spinner
+}
+//
+<spinner v-show="loadingBetList" type="bubbles" class="update-rotate"></spinner>
+```
+
