@@ -793,7 +793,7 @@ action中的context
 
 #### 17.移动端调试工具
 
-先下载插件再引入代码 
+先下载插件再引入代码 （可以写在 main.js）
 
 ```
 import VConsole from 'vconsole'

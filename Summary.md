@@ -285,7 +285,7 @@ getResult();
 
 ##### 9.git checkout
 
-返回上一个版本，eg：git checkout .则返回所有版本
+返回上一个版本，eg：git checkout .则返回所有上一个版本
 
 ##### 10.背景图片不适应
 
