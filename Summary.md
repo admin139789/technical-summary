@@ -398,3 +398,24 @@ downloadIamge(selector, name) {
     },
 ```
 
+##### 15.after   加样式！！！！！！！！！！！
+
+```
+元素里面最后一个加上标签
+.checked::after{
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background: url('../../../assets/img/checked.png') no-repeat;
+}
+```
+
+##### 16.第三方 -iframe
+
+```
+比如支付 ，客服，拿到第三方链接后，<iframe src='附上地址'></iframe>
+```
+
