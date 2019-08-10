@@ -800,3 +800,24 @@ import VConsole from 'vconsole'
 var vConsole = new VConsole();
 ```
 
+#### 18.第三方登录（微信/QQ）
+
+<https://www.jianshu.com/p/ae0d925737f7>
+
+##### 微信
+
+```
+
+```
+
+##### QQ
+
+```
+
+```
+
+#### 19.td中的文字竖直排列
+
+需要加上div才有用
+
+![](F:\technical_summary\img\1212获.PNG)
