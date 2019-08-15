@@ -323,6 +323,11 @@ background-size:100% 100% ;
 </script>
 </body>
 </html>
+
+//银行
+var reg = /^(\d{3})\d+(\d{3})$/;
+var star= '************';
+return str.replace(reg, "$1"+star+"$2");
 ```
 
 ##### 13.vux  刷新

@@ -821,3 +821,7 @@ var vConsole = new VConsole();
 需要加上div才有用
 
 ![](F:\technical_summary\img\1212获.PNG)
+
+20.canvas
+
+用px不要用rem，而且用offsetLeft/offsetTop去获取td位置，不要计算！！！误差贼大
