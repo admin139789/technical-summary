@@ -61,16 +61,16 @@
           rowspan='29' >
            总和     
           </tr>
-          <tr style='line-height:12px;border: 1px solid #ccc;' v-for='(item,index) in 28' :key='index' class='issueNum'>
+          <tr style='line-height:12px;border: 1px solid #ccc;height: 14px;' v-for='(item,index) in 28' :key='index' class='issueNum'>
           {{28-item}}
           </tr>
           </tbody>
         </table>
       </div>
       <!-- 右table部分 -->
-      <div class='dvRight' style='position:relative'>
-      <!-- position:relative; z-index:10 -->
-        <table class='tabRight' style='border-top: 1px solid #ccc;'>
+      <div class='dvRight' ref='dvRight' style='position:relative' @scroll='scrollWindow'>
+        <!-- position:relative; z-index:10 -->
+        <table class='tabRight' style='border-top: 1px solid #ccc;' ref='tbRight'>
           <tbody class='tbRight'>
             <!-- 头部展示 -->
             <tr  class='rt' id='rt' style='border-bottom: 1px solid #ccc;height: 18px; line-height:18px;'>
@@ -81,7 +81,7 @@
                </td> 
             </tr>
             <!-- 内容-走势图trendData  border: 1px solid #ccc;border-top: 0 none; border-left:0 none;-->
-            <tr v-for='(item20,idx20) in 28' :key='idx20'  ref='trArr' class='rm'>
+            <tr v-for='(item20,idx20) in 28' :key='idx20'  ref='trArr' class='rm' style='height: 14px;line-height: 14px;'>
               <td v-for='(item21,idx21) in trendData' :key='idx21' style=' border: 1px solid #ccc;border-top: 0 none; border-left:0 none;width: 14px;height: 14px;'></td>
             </tr>
             <!-- 期号  -->
@@ -102,8 +102,10 @@
         <span>更多</span>
       </div> -->
     </div>
+    <!-- 加载更多 -->
+    <load-more :show-loading="loadMoreSwitch"  background-color="#fbf9fe" :tip="loadTips" v-if='loadMoreSwitch'></load-more>
     <!-- 文字说明 -->
-    <div class="desc"  v-if='trendData.length>0'>
+    <div class="desc"  v-if='trendData.length>0' style='margin-bottom: 20px;'>
       <p>以30期作为基础数据分析</p>
       <p>热门<span class='remen'></span>:开10期以上</p>
       <p>中门<span class='zhongmen'></span>:开5期以上</p>
@@ -124,8 +126,11 @@
   </div>
 </template>
 <script>
-import Scroll from "../../../node_modules/iview/src/components/Scroll/Scroll.vue";
+import { LoadMore } from 'vux';
 export default {
+  components: {
+    LoadMore
+  },
   data() {
     let _this = this;
     return {
@@ -164,6 +169,8 @@ export default {
         name: "顺天元宝",
         id:'1'
       }, //初始化
+      loadMoreSwitch:false,//加载更多
+      loadTips:'',
     };
   },
   mounted() {
@@ -174,14 +181,34 @@ export default {
       this.lottery_type=this.$route.query.id;
       this.getDataInit();
     }
+    else{
+      this.$vux.toast.show({
+        text: "数据请求有误"
+      });
+    }
     this.nowdate = this.nowdate_str = this.getnowdate();
     // this.wrapperHeight =document.documentElement.clientHeight -this.$refs.wrapper.getBoundingClientRect().top;
   },
   methods: {
-    // 侧拉加载更多
-    slideOver(){
-      var clienWidth  = document.documentElement.clienWidth;
-      console.log('进行滚动',clienWidth)
+    //监听滚动
+    scrollWindow(){
+      var dvRight=this.$refs.dvRight;
+      var tbRight=this.$refs.tbRight;
+      //宽度
+      var drw=dvRight.clientWidth;
+      var tbw=tbRight.clientWidth; 
+      //偏移量  
+      var drLeft=dvRight.scrollLeft;
+      //最大偏移量
+      var maxLeft=tbw-drw;
+      // console.log('滚动中',dvRight,drLeft,'drw',drw,'tbw',tbw,'最大偏移量',maxLeft);
+      if(drLeft>=maxLeft){
+        console.log('加载更多');
+        this.loadTips='加载更多中...';
+        this.loadMoreSwitch=true;
+        this.page++;
+        this.getDataInit();
+      }
     },
     //加载更多
     loadMore(){
@@ -202,7 +229,7 @@ export default {
       for(var i=0;i<this.cvsArr.length;i++){ 
         var tdw=this.createTd[i].offsetLeft;
         var tdh=this.createTd[i].offsetTop;
-        console.log('tdw tdh',tdw,tdh)
+        // console.log('tdw tdh',tdw,tdh);
         var cvs = document.createElement("canvas");
         if(i<this.cvsArr.length-1){ 
           cvsHeight =Math.abs(this.createTd[i+1].offsetTop-this.createTd[i].offsetTop);
@@ -224,7 +251,7 @@ export default {
           if(cvsHeight==0){
             minTop=minTop-1;
           }  
-          minLeft=tdw+cw/2+1/2;
+          minLeft=tdw+cw/2+1;
         }
         cvs.width=cw;     
         cvs_top=minTop;
@@ -346,19 +373,17 @@ export default {
           this.$refs.trArr[27-this.openArr[i]].childNodes[i].innerHTML='<span class="openSpan" style="background-color:'+this.currentColor+';color:#fff;border-radius:50%;display:block;width:6px;height:6px;margin:0 auto"></span>';
           this.createTd.push(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
           var tdOffset=this.getOffset(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
-          // var tdOffset=this.$refs.trArr[27-this.openArr[i]].childNodes[i].offsetTop;
           this.cvsArr.push(tdOffset);
-          console.log('cvsArr',this.cvsArr)
         }
         //获取开奖号码span,匹配颜色
         for(var k=0;k<this.$refs.openSpan.length;k++){
           this.$refs.openSpan[k].style.color=this.colorData[k].type_color;
         }
         // 使用canvas画线
-        this.createCanvasLine();
+        // this.createCanvasLine();
       });
     },
-    //获取中将号码
+    //初始化-获取中将号码
     getDataInit(){  
       var params = {
         token: localStorage.getItem("token"),
@@ -366,22 +391,40 @@ export default {
         lottery_type: this.lottery_type,
         page: this.page
       };
-      this.$vux.loading.show();
+      // this.$vux.loading.show();
       this.$axios
         .post(this.urlRequest + '?m=api&c=openAward&a=trendList', params)
         .then(res => {
-          this.$vux.loading.hide();
-          if(res.status==0){
+          // this.$vux.loading.hide();
+          this.loadMoreSwitch=false;
+          this.loadTips='';
+          if(res.status==0){       
             //只要前三十个数据
             if(this.page==1){
               this.trendData=res.list.slice(0,30);
               this.colorData=res.list.slice(0,30);  
             }
             else if(this.page>1){
-              for(var i=0;i<res.list.slice(0,30).length;i++){
-                this.trendData.push(res.list[i]);
-                this.colorData.push(res.list[i]);
+              if(res.list.length>=30){
+                for(var i=0;i<res.list.slice(0,30).length;i++){
+                  this.trendData.push(res.list[i]);
+                  this.colorData.push(res.list[i]);
+                }
+              }
+              else{
+                this.$vux.toast.show({
+                  text: "到底啦,没有更多"
+                });
               }          
+            }
+            //当数据小于30个的时候
+            if(this.trendData.length<30){
+              var nowDay=new Date(this.nowdate_str).getTime()-24*3600*1000;
+              var time= new Date(nowDay);
+              var lastDay= time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate();
+              //减少一天重新请求接口
+              this.ltThirtyData(lastDay,this.trendData.length);
+              console.log('nowDay',this.nowdate_str,'lastDay',lastDay);
             }
             //openArr/testArr 初始化
             this.openArr=[];
@@ -403,6 +446,33 @@ export default {
             text: "数据请求超时"
           });
         });
+    },
+    //当数据小于30条的
+    ltThirtyData(_lastday,nowDayDataLength){ 
+      var params = {
+        token: localStorage.getItem("token"),
+        date: _lastday,
+        lottery_type: this.lottery_type,
+        page: this.page
+      };
+      this.$axios
+      .post(this.urlRequest + '?m=api&c=openAward&a=trendList', params)
+      .then(res => {
+        if(res.status==0){
+          var _data=res.list.slice(0,30-nowDayDataLength);
+          for(var i=0;i<_data.length;i++){
+            this.trendData.push(_data[i]);
+            this.colorData.push(_data[i]);
+          }         
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        this.$vux.loading.hide();
+        this.$vux.toast.show({
+          text: "数据请求超时"
+        });
+      });
     },
     //返回到上一页
     back() {
@@ -500,7 +570,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .accountInfo {
   width: 100%;
@@ -925,6 +994,7 @@ export default {
   .issue{
     line-height: 14px;
     padding-right: 2px;
+    margin:0 auto;
   }
   .issue td{
     line-height: 14px;
@@ -1040,5 +1110,18 @@ export default {
     margin:3px;
     border-radius:50%;
     background-color: gray;
+  }
+  /*加载更多样式1*/
+  /deep/ .vux-loadmore{
+    position:fixed;
+    left: 0px;
+    top: 0px;
+    left:50%;
+    transform: translateX(-50%);
+    top: 200px;
+    color:#000;
+  }
+  /deep/ .vux-loadmore .weui-loadmore__tips{
+    color:#000;
   }
 </style>
