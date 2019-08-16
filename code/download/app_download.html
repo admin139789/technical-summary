@@ -1,0 +1,390 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>{$plat_config['platform_name']} App下载</title>
+	<script type="text/javascript" src="statics/web/js/jquery.1.8.2.min.js"></script>
+	<link rel="stylesheet" href="statics/web/css/foundation.css" />
+	<link rel="stylesheet" href="statics/web/css/app_down.css" />
+	<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+</head>
+
+<body>
+	<img src="{$down_conf['pc_pic']}" class="web_body pc_show" />
+	<img src="{$down_conf['mobile_pic']}" class="web_body mobile_show" />
+	<div class="qr-code">
+		<div id="qrcode"></div>
+		<p style="text-align: center;">扫一扫二维码下载</p>
+	</div>
+
+	<div class="main_content">
+		<div class="mainCon">
+
+			<!--<div class="qr-code">
+					<div id="qrcode"></div>
+					<p>扫一扫二维码下载</p>
+				</div>-->
+			<!--<div id="logo">
+					<img class="logo" src="{$plat_config['app_logo']}" />
+				</div>-->
+			<!-- <a class="btn nota" href="javaScript:void(0) " onclick="hrefClick()">继续访问</a> -->
+			<!--	<p class="prompt">温馨提示：WAP手机端直接点击链接按钮访问</p>-->
+
+			<!--<p class="prompt-title" id="updateIso">-- 更新于：{$date1}<i></i></p>-->
+			<!--<p class="prompt-title" id="updateAndroid">-- 更新于：{$date2}<i></i></p>-->
+
+			<!--<div class="app-tutorial-handler" id="IOSTips" style="display: none;">-->
+			<!--<p>-->
+			<!--<font style="color:red">安装提醒</font>-->
+			<!--</p>-->
+			<!--</div>-->
+
+			<div class="app-btn" id="downIso" data-id="1">
+				<a class="btn" href="{$re1['url']}">请点击下载App</a>
+			</div>
+			<div class="app-btn" id="downAndroid" data-id="2">
+				<a class="btn" href="{$re2['url']}">请点击下载App</a>
+			</div>
+			<!--<div class="qr-code">
+					<div id="qrcode"></div>
+					<p>扫一扫二维码下载</p>
+				</div>-->
+		</div>
+	</div>
+
+	<!--modal start-->
+	<div class="modal" id="app-tutorial-modal" style="display: none;">
+		<div class="modal-inner">
+			<div class="modal-header">
+				<h2 class="modal-title">IOS安装提醒</h2>
+				<a class="modal-close" href="javascript:void(0);">关闭</a>
+			</div>
+			<div class="modal-body" style="max-height: 448px;">
+				<p style="text-indent: 8mm;">官方搜集了一些已更新iOS 9用户出现的典型问题，下述一一解答：</p>
+				<p style="text-indent: 8mm;">部分用户无法正常启动APP应用(如下图)</p>
+				<p style="text-align: center;">
+					<!-- <img src="/statics/web/himg/q1.png" alt=""> -->
+					<img class="modal-img1" src="{$down_conf['ios_tips_1']}">
+				</p>
+				<p>STEP 1</p>
+				<p style="text-indent: 8mm;">选择【设置】-【通用】-【设备管理】</p>
+				<p style="text-align: center;">
+					<!-- <img src="/statics/web/himg/q2.png" alt="">
+                <img src="/statics/web/himg/q3.png" alt=""> -->
+					<img class="modal-img2" src="{$down_conf['ios_tips_2']}">
+					<img class="modal-img3" src="{$down_conf['ios_tips_3']}">
+				</p>
+				<p>STEP 2</p>
+				<p style="text-indent: 8mm;">选择【WHT HIGH TECH COMPANY INC.】-点击【信任 WHT HIGH TECH COMPANY INC.】</p>
+				<p style="text-align: center;">
+					<!-- <img src="/statics/web/himg/q4.png" alt="">
+                <img src="/statics/web/himg/q5.png" alt=""> -->
+					<img class="modal-img4" src="{$down_conf['ios_tips_4']}">
+					<img class="modal-img5" src="{$down_conf['ios_tips_5']}">
+				</p>
+				<p>STEP 3</p>
+				<p style="text-indent: 8mm;">选择【信任】!</p>
+				<p style="text-align: center;">
+					<!-- <img src="/statics/web/himg/q6.png" alt=""> -->
+					<img class="modal-img6" src="{$down_conf['ios_tips_6']}">
+				</p>
+				<p>OK，完成上述步骤，就可以开始体验手机APP版啦!</p>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$("#downIso").click(function () {
+
+			//				statisticsLinkCount($(this).attr("data-id"));
+			$(".modal").show();
+		});
+
+		$("#downAndroid").click(function () {
+			statisticsLinkCount($(this).attr("data-id"))
+		});
+
+		function statisticsLinkCount(type) {
+			var data = {};
+			data.type = type;
+			$.ajax({
+				url: "?m=web&c=lobby&a=downloadNum",
+				type: 'POST',
+				data: data,
+				// async: false,
+				dataType: "json",
+				success: function (msg) {
+					console.log(msg);
+				}
+			})
+		}
+
+		//判断访问终端
+		var browser = {
+			versions: function () {
+				var u = navigator.userAgent,
+					app = navigator.appVersion;
+				return {
+					trident: u.indexOf('Trident') > -1, //IE内核
+					presto: u.indexOf('Presto') > -1, //opera内核
+					webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+					gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+					mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+					ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+					android: u.indexOf('Android') > -1 || u.indexOf('Adr') > -1, //android终端
+					iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
+					iPad: u.indexOf('iPad') > -1, //是否iPad
+					webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+					weixin: u.indexOf('MicroMessenger') > -1, //是否微信 （2015-01-22新增）
+					qq: u.match(/\sQQ/i) == " qq" //是否QQ
+				};
+			}(),
+			language: (navigator.browserLanguage || navigator.language).toLowerCase()
+		}
+		var dataNews = {}; //型号
+		//判断是否IE内核
+		if (browser.versions.android) {
+			dataNews.app_type = 2;
+		}
+		//判断是否webKit内核
+		if (browser.versions.ios) {
+			dataNews.app_type = 1;
+		}
+		//判断是否移动端
+		if (browser.versions.weixin || browser.versions.qq || browser.versions.iPhone) {
+			$(".mobile_show").show();
+			$(".pc_show").hide();
+			$(".qr-code").hide();
+			$(".mask").show();
+			$(".mask").click(function () {
+				$(".mask").hide();
+			});
+			// return false;
+		} else {
+			$(".nota").hide();
+			$(".mobile_show").hide();
+			$(".pc_show").show();
+			$(".app-btn").hide();
+			//				$(".mobile_show").show();
+			//				$(".pc_show").hide();
+			$(".mask").hide();
+		}
+		console.log(dataNews)
+
+		if (dataNews.app_type == 1) {
+			$("#downIso").show();
+			$("#updateIso").show();
+			$("#IOSTips").show();
+			$("#downAndroid").hide();
+			$("#updateAndroid").hide();
+		}
+		if (dataNews.app_type == 2) {
+			$("#downAndroid").show();
+			$("#updateAndroid").show();
+			$("#IOSTips").hide();
+			$("#downIso").hide();
+			$("#updateIso").hide();
+		}
+	</script>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			height: 100%;
+			width: 100%;
+			background-color: rgba(0, 0, 0, 0.8);
+			z-index: 9999;
+		}
+
+		.modal-inner {
+			margin: 20px auto;
+			max-width: 480px;
+			width: 100%;
+			background-color: rgb(255, 255, 255);
+			border-radius: 4px;
+			box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.8);
+		}
+
+		.modal-header {
+			position: relative;
+			height: 40px;
+			padding: 4px;
+			border-bottom: 1px solid rgb(221, 221, 221);
+			box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.modal-title {
+			margin: 0;
+			font-weight: normal;
+			font-size: 14px;
+			padding: 0px 8px;
+			line-height: 32px;
+		}
+
+		.modal-close {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			color: rgb(153, 153, 153);
+			width: 48px;
+			height: 24px;
+			line-height: 24px;
+			font-size: 12px;
+			text-align: center;
+			background-color: rgb(238, 238, 238);
+			border-radius: 2px;
+		}
+
+		.modal-close:hover {
+			color: rgb(255, 255, 255);
+			background-color: rgb(204, 0, 0);
+		}
+
+		.modal-body {
+			padding: 10px;
+			overflow: auto;
+			max-height: 400px;
+		}
+
+		#app-tutorial-modal p {
+			margin-bottom: 0;
+			line-height: 24px;
+			font-size: 12px;
+		}
+
+		#app-tutorial-modal img {
+			margin: 16px auto;
+			width: 320px;
+		}
+
+		.web_body {
+			width: 1200px;
+			position: relative;
+			left: 50%;
+			margin-left: -600px;
+			top: 0;
+		}
+
+		.main_content {
+			width: 100%;
+			position: absolute;
+			height: auto;
+		}
+
+		.mainCon {
+			height: auto;
+		}
+
+		.qr-code {
+			position: absolute;
+			left: 50%;
+			top: 1600px;
+			width: 800px;
+			margin-left: -400px;
+		}
+
+		.app-btn {
+			position: fixed;
+			width: 50%;
+			margin-left: auto;
+			left: 50%;
+			bottom: 40px;
+			transform: translateX(-50%);
+			margin-right: auto;
+			display: block;
+		}
+
+		.nota {
+			position: fixed;
+			bottom: 90px;
+			width: 50%;
+			margin-left: auto;
+			left: 50%;
+			transform: translateX(-50%);
+			margin-right: auto;
+		}
+
+		.app-btn a {
+			width: 100%;
+		}
+
+		canvas {
+			width: 600px;
+			margin-left: 100px;
+		}
+
+		body .mobile_show {
+			width: 100%;
+			display: block;
+			margin: 0;
+			left: 0;
+			position: fixed;
+		}
+
+		.btn {
+			height: 40px;
+			font-size: 20px;
+			line-height: 40px;
+		}
+	</style>
+	<script>
+		var down_url = 'http://' + window.location.host + '/down.php'
+		$("#qrcode").qrcode(down_url);
+		$('.app-tutorial-handler p').click(function () {
+			$('#app-tutorial-modal').show();
+		})
+		$('.modal-close').click(function () {
+			$('#app-tutorial-modal').hide();
+		})
+
+		$('.modal-body').css({
+			'max-height': $(window).height() - 80
+		});
+
+		$(window).resize(function () { //当浏览器大小变化时
+			$('.modal-body').css({
+				'max-height': $(window).height() - 80
+			});
+		});
+
+		// $(function () {
+		// 	$.ajax({
+		// 		url: '/?m=api&c=lobbynew&a=download_page',
+		// 		type: 'post',
+		// 		dataType: 'json',
+		// 		data: {
+		// 			//空，使用新的下载页面设置
+		// 		},
+		// 		success: function (data) {
+		// 			if (data.status == 0) {
+		// 				//ios安装提醒图片
+		// 				$('.modal .modal-img1').attr('src', data.data.setup_pic1)
+		// 				$('.modal .modal-img2').attr('src', data.data.setup_pic2)
+		// 				$('.modal .modal-img3').attr('src', data.data.setup_pic3)
+		// 				$('.modal .modal-img4').attr('src', data.data.setup_pic4)
+		// 				$('.modal .modal-img5').attr('src', data.data.setup_pic5)
+		// 				$('.modal .modal-img6').attr('src', data.data.setup_pic6)
+		// 			}
+		// 		}
+		// 	})
+		// });
+	</script>
+	<!--modal end-->
+
+	<script>
+		function hrefClick() {
+			if (browser.versions.mobile) {
+				window.location.href = location.origin + '';
+			} else {
+				window.location.href = location.origin + '';
+			}
+		}
+	</script>
+
+</body>
+
+</html>
