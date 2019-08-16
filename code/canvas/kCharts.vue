@@ -142,6 +142,7 @@ export default {
       page: 1,
       lottery_type:'',
       trendData:[],//开奖数据
+      pinTrendData:[],//数据不够三十条
       colorData:[],//开奖数据(带上颜色)
       openArr:[],//开奖总和
       testArr:[],//测试
@@ -202,13 +203,13 @@ export default {
       //最大偏移量
       var maxLeft=tbw-drw;
       // console.log('滚动中',dvRight,drLeft,'drw',drw,'tbw',tbw,'最大偏移量',maxLeft);
-      if(drLeft>=maxLeft){
-        console.log('加载更多');
-        this.loadTips='加载更多中...';
-        this.loadMoreSwitch=true;
-        this.page++;
-        this.getDataInit();
-      }
+      // if(drLeft>=maxLeft){
+      //   console.log('加载更多');
+      //   this.loadTips='加载更多中...';
+      //   this.loadMoreSwitch=true;
+      //   this.page++;
+      //   this.getDataInit();
+      // }
     },
     //加载更多
     loadMore(){
@@ -380,7 +381,7 @@ export default {
           this.$refs.openSpan[k].style.color=this.colorData[k].type_color;
         }
         // 使用canvas画线
-        // this.createCanvasLine();
+        this.createCanvasLine();
       });
     },
     //初始化-获取中将号码
@@ -424,9 +425,12 @@ export default {
               var lastDay= time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate();
               //减少一天重新请求接口
               this.ltThirtyData(lastDay,this.trendData.length);
-              console.log('nowDay',this.nowdate_str,'lastDay',lastDay);
+              return false;
+              console.log('nowDay',this.nowdate_str,'lastDay',lastDay,this.pinTrendData);
+
             }
             //openArr/testArr 初始化
+            console.log('pin完后继续查看数据',this.trendData)
             this.openArr=[];
             this.testArr=[];
             for(var i=0;i<this.trendData.length;i++){
@@ -449,6 +453,7 @@ export default {
     },
     //当数据小于30条的
     ltThirtyData(_lastday,nowDayDataLength){ 
+      console.log('=========数据小于30条需要拼接数据===========');
       var params = {
         token: localStorage.getItem("token"),
         date: _lastday,
@@ -463,7 +468,20 @@ export default {
           for(var i=0;i<_data.length;i++){
             this.trendData.push(_data[i]);
             this.colorData.push(_data[i]);
-          }         
+          } 
+          this.pinTrendData=this.trendData;
+          //openArr/testArr 初始化
+          console.log('pin完后继续查看数据',this.trendData)
+          this.openArr=[];
+          this.testArr=[];
+          for(var i=0;i<this.trendData.length;i++){
+            this.openArr.push(this.trendData[i].open_result*1);
+            this.testArr.push(this.trendData[i].open_result*1);
+          }
+          // 判断每个号码开期情况
+          this.judgeNum(this.testArr);
+          //获取节点nextTick
+          this.getTd();     
         }
       })
       .catch(error => {
