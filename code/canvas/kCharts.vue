@@ -403,13 +403,13 @@ export default {
           // this.createCanvasLine();
           // console.log('this.cvsArr==========='+n,this.cvsArr,'this.createTd=========='+n,this.createTd,this.$refs.openSpan)
         }
-
+        console.log('thisOpenArr========',this.openArr)
         this.createCanvasLine();
       });
     },
     //初始化-获取中将号码
     getDataInit(){  
-      console.log('加载更多后切换更多');
+      console.log('加载更多后切换更多'+this.page,this.page);
       var params = {
         token: localStorage.getItem("token"),
         date: this.nowdate_str,
@@ -461,9 +461,11 @@ export default {
               this.openArr.push(this.trendData[i].open_result*1);
               this.testArr.push(this.trendData[i].open_result*1);
             }
-            // 加载更多进行判断,防止加载end出现空数组
-            if(!this.loadEnd){
-              return false;
+            // 当this.page>1时候加载更多进行判断,防止加载end出现空数组
+            if(this.page>1){
+              if(!this.loadEnd){
+                return false;
+              }
             }
             //获取节点nextTick
             this.getTd();
@@ -524,7 +526,6 @@ export default {
     },
     //方法：改动彩票类型
     change_type(_v) {
-      console.log('_v===============',_v);
       //数据清空
       var cvsdiv = document.getElementById("cvsDiv");
       this.openArr=[];
@@ -562,6 +563,7 @@ export default {
       var cvsdiv = document.getElementById("cvsDiv");
       this.trendData=''; 
       cvsdiv.innerHTML='';
+      this.page=1;
       this.getDataInit();
     },
     //日期选择的事件
