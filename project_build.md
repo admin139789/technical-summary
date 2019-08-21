@@ -21,10 +21,6 @@
 不管是 assets还是static ，如果是遍历出来的，一定要require！！！
 ```
 
-
-
-
-
 #### 3.computed
 
 状态需要自己动态变化的时候，使用computed
@@ -822,6 +818,12 @@ var vConsole = new VConsole();
 
 ![](F:\technical_summary\img\1212获.PNG)
 
-20.canvas
+### 20.canvas
 
 用px不要用rem，而且用offsetLeft/offsetTop去获取td位置，不要计算！！！误差贼大
+
+### 21.js要使用vue的this方案！
+
+在js写好函数，app.vue中 import进去，然后将this，传进来
+
+#### 

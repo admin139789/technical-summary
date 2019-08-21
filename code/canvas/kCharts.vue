@@ -74,7 +74,7 @@
           <tbody class='tbRight'>
             <!-- 头部展示 -->
             <tr  class='rt' id='rt' style='border-bottom: 1px solid #ccc;height: 18px; line-height:18px;'>
-              <td :colspan='trendData.length' style='background-color:#e8eaec;height: 18px; line-height:18px;'>前30期中奖号码分布如下</td>
+              <td :colspan='trendData.length' style='background-color:#e8eaec;height: 18px; line-height:18px;'>30期为基础单位中奖号码分布如下</td>
             </tr>
             <tr  style='background-color:#e8eaec;width: 14px;height: 14px;' class='ro' id='ro'>
                <td v-for='(item1,idx1) in  colorData' :key='idx1' style=' border-right: 1px solid #ccc;border-bottom: 1px solid #ccc;line-height: 14px;width: 14px;height: 14px;'><span style="border-radius;50%;display;block;" ref='openSpan'>{{item1.open_result}}</span>
@@ -115,7 +115,7 @@
     <div id="type_modal" :class="modal_show" @click="changes_arrow">
       <div class="type_all">
         <div
-          :class="item.name==type.name?'choose_class':'default_class'"
+          :class="item.id==lottery_type?'choose_class':'default_class'"
           v-for="(item,index) in lotteryData"
           :key="index"
           :value="item"
@@ -152,7 +152,7 @@ export default {
       macthColorArr2:[],//匹配颜色数组2
       getNum:0,//小于5期且连续不开10期以上的i的初始值
       isGetNum:false,//连续不开十期开关
-      currentColor:'gray',
+      currentColor:'#000',
       lotteryData:[
         {
           name:'开元通宝',
@@ -172,6 +172,9 @@ export default {
       }, //初始化
       loadMoreSwitch:false,//加载更多
       loadTips:'',
+      pageColorArr1:{},//pager>=2时颜色匹配对象1
+      pageColorArr2:{},//pager>=2时颜色匹配对象2
+      loadEnd:true,//防止重复显示加载到底
     };
   },
   mounted() {
@@ -191,7 +194,7 @@ export default {
     // this.wrapperHeight =document.documentElement.clientHeight -this.$refs.wrapper.getBoundingClientRect().top;
   },
   methods: {
-    //监听滚动
+    //监听滚动 加载更多
     scrollWindow(){
       var dvRight=this.$refs.dvRight;
       var tbRight=this.$refs.tbRight;
@@ -203,21 +206,22 @@ export default {
       //最大偏移量
       var maxLeft=tbw-drw;
       // console.log('滚动中',dvRight,drLeft,'drw',drw,'tbw',tbw,'最大偏移量',maxLeft);
-      // if(drLeft>=maxLeft){
-      //   console.log('加载更多');
-      //   this.loadTips='加载更多中...';
-      //   this.loadMoreSwitch=true;
-      //   this.page++;
-      //   this.getDataInit();
-      // }
+      if(drLeft>=maxLeft){
+        console.log('加载更多');
+        this.loadTips='加载更多中...';
+        this.loadMoreSwitch=true;
+        this.page++;
+        this.getDataInit();
+      }
     },
-    //加载更多
-    loadMore(){
-      this.page++;
-      console.log('this.page',this.page);
-      this.getDataInit();
-    },
-    createCanvasLine(){
+    createCanvasLine(){ 
+      this.createTd=[];
+      this.cvsArr=[];
+      for(var i=0;i<this.openArr.length;i++){
+        this.createTd.push(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
+        var tdOffset=this.getOffset(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
+        this.cvsArr.push(tdOffset);
+      }
       var cvs_top=''; 
       var cvs_left='';
       var minTop='';
@@ -227,6 +231,7 @@ export default {
       //获取相应的宽度 高度
       var cw=this.createTd[0].clientWidth;
       var ch=this.createTd[0].clientHeight;
+      // console.log('this.createTd======',this.createTd,this.openArr,'this.cvsArr',this.cvsArr,cw,ch);
       for(var i=0;i<this.cvsArr.length;i++){ 
         var tdw=this.createTd[i].offsetLeft;
         var tdh=this.createTd[i].offsetTop;
@@ -300,20 +305,20 @@ export default {
       offset.top += Node.offsetTop;    
       return this.getOffset(Node.offsetParent, offset);//向上累加offset里的值
     },
-    //判断每一期和的个数
-    judgeNum(_arr){
+    //判断每一期和的个数！！！
+    judgeNum(_arr,idx){
       var _res = [];
       _arr.sort(); 
       for (var i = 0; i < _arr.length;) {  
         var count = 0;  
         for (var j = i; j < _arr.length; j++) {  
-          if (_arr[i] == _arr[j]) {  
+          if (_arr[i]*1 == _arr[j]*1) {  
             count++;  
-          }  
+          }
         }  
         _res.push([_arr[i], count]);  
         i += count;  
-      }  
+      }
       //_res 二维数维中保存了 值和值的重复数  
       var _newArr = [];
       this.macthColorArr1=[];
@@ -322,8 +327,11 @@ export default {
         _newArr.push({openNum:_res[i][0] ,countNum:_res[i][1]}); 
         // this.macthColorArr2.push(_res[i][0]+'X'+_res[i][1]);
         this.macthColorArr2.push(_res[i][0]);
+        this.pageColorArr2['colorArr'+idx]=this.macthColorArr2;
       }     
       this.macthColorArr1=_newArr;
+      this.pageColorArr1['colorArr'+idx]=this.macthColorArr1;
+      // console.log('macthColorArr1==',this.macthColorArr1,'macthColorArr2==',this.macthColorArr2,'=========this.pageColorArr1',this.pageColorArr1,'=========this.pageColorArr2',this.pageColorArr2,'this.openArr',this.openArr);
     },
     setGray(openNum){
       this.getNum=0;
@@ -352,40 +360,56 @@ export default {
     //获取相应节点td
     getTd(){
       this.$nextTick(()=>{
-        for(var i=0;i<this.openArr.length;i++){
-          //判断小于10-含有数字0
-          // if(this.openArr[i][0]==0){
-          //   this.openArr[i]=this.openArr[i].substring(1,);
-          // } 
-          //颜色判断
-          var cIdx=this.macthColorArr2.indexOf(this.openArr[i]);
-          var currentCount=this.macthColorArr1[cIdx].countNum*1;
-          if(currentCount>=10){
-            this.currentColor='red';
+        // console.log('getTd里面的this.openArr',this.openArr,'this.pageColorArr2',this.pageColorArr2,'this.pageColorArr1',this.pageColorArr1);
+        for(var n=1;n<=this.page;n++){
+          /*************pageColorArr拉动一次才执行一次***********/
+          var pageArr=[];
+          var currentPage=30*(n-1);
+          pageArr=this.testArr.slice(0+currentPage,30+currentPage);
+          this.judgeNum(pageArr,n-1);
+          /************************/      
+          var issue_trArr=[];
+          //每30期为单位的中奖号码--横的
+          var issue_openArr=this.openArr.slice(0+currentPage,30+currentPage);
+          for(var i=0;i<issue_openArr.length;i++){
+            //颜色判断
+            var cIdx=this.pageColorArr2['colorArr'+(n-1)].indexOf(issue_openArr[i]);
+            var currentCount=this.pageColorArr1['colorArr'+(n-1)][cIdx].countNum*1;
+            if(currentCount>=10){
+              this.currentColor='red';
+            }
+            else if(currentCount>=5&&currentCount<10){
+              this.currentColor='blue';
+            }
+            else if(currentCount<5){       
+              var returnColor = this.setGray(this.openArr[i]+'');
+              this.currentColor=returnColor;
+            }
+            this.colorData[i+currentPage].type_color=this.currentColor;           
+            this.$refs.trArr[27-issue_openArr[i]].childNodes[i+currentPage].innerHTML='<span  class="openSpan" style="background-color:'+this.currentColor+';color:#fff;border-radius:50%;display:block;width:6px;height:6px;margin:0 auto"></span>';
+            // this.createTd.push(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
+            // var tdOffset=this.getOffset(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
+
+            // this.createTd.push(this.$refs.trArr[27-issue_openArr[i]].childNodes[i+currentPage]);
+            // var tdOffset=this.getOffset(this.$refs.trArr[27-issue_openArr[i]].childNodes[i+currentPage]);
+            // this.cvsArr.push(tdOffset);
+            // console.log(this.createTd,this.$refs.trArr[27-issue_openArr[i]].childNodes[i+currentPage],'test======');
           }
-          else if(currentCount>=5&&currentCount<10){
-            this.currentColor='blue';
+          //获取头部开奖号码span,匹配颜色
+          for(var k=0;k<this.$refs.openSpan.length;k++){
+            this.$refs.openSpan[k].style.color=this.colorData[k].type_color;
           }
-          else if(currentCount<5){       
-            var returnColor = this.setGray(this.openArr[i]+'');
-            this.currentColor=returnColor;
-          }
-          this.colorData[i].type_color=this.currentColor;            
-          this.$refs.trArr[27-this.openArr[i]].childNodes[i].innerHTML='<span class="openSpan" style="background-color:'+this.currentColor+';color:#fff;border-radius:50%;display:block;width:6px;height:6px;margin:0 auto"></span>';
-          this.createTd.push(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
-          var tdOffset=this.getOffset(this.$refs.trArr[27-this.openArr[i]].childNodes[i]);
-          this.cvsArr.push(tdOffset);
+          // 使用canvas画线
+          // this.createCanvasLine();
+          // console.log('this.cvsArr==========='+n,this.cvsArr,'this.createTd=========='+n,this.createTd,this.$refs.openSpan)
         }
-        //获取开奖号码span,匹配颜色
-        for(var k=0;k<this.$refs.openSpan.length;k++){
-          this.$refs.openSpan[k].style.color=this.colorData[k].type_color;
-        }
-        // 使用canvas画线
+
         this.createCanvasLine();
       });
     },
     //初始化-获取中将号码
     getDataInit(){  
+      console.log('加载更多后切换更多');
       var params = {
         token: localStorage.getItem("token"),
         date: this.nowdate_str,
@@ -407,15 +431,17 @@ export default {
             }
             else if(this.page>1){
               if(res.list.length>=30){
+                this.loadEnd=true;
                 for(var i=0;i<res.list.slice(0,30).length;i++){
                   this.trendData.push(res.list[i]);
                   this.colorData.push(res.list[i]);
                 }
               }
               else{
+                this.loadEnd=false;
                 this.$vux.toast.show({
                   text: "到底啦,没有更多"
-                });
+                });          
               }          
             }
             //当数据小于30个的时候
@@ -427,18 +453,18 @@ export default {
               this.ltThirtyData(lastDay,this.trendData.length);
               return false;
               console.log('nowDay',this.nowdate_str,'lastDay',lastDay,this.pinTrendData);
-
             }
             //openArr/testArr 初始化
-            console.log('pin完后继续查看数据',this.trendData)
             this.openArr=[];
             this.testArr=[];
             for(var i=0;i<this.trendData.length;i++){
               this.openArr.push(this.trendData[i].open_result*1);
               this.testArr.push(this.trendData[i].open_result*1);
             }
-            // 判断每个号码开期情况
-            this.judgeNum(this.testArr);
+            // 加载更多进行判断,防止加载end出现空数组
+            if(!this.loadEnd){
+              return false;
+            }
             //获取节点nextTick
             this.getTd();
           }
@@ -496,44 +522,21 @@ export default {
     back() {
       this.$router.go(-1);
     },
-    //刷新：下滑刷新
-    handleReachTop() {
-      let _this = this;
-      return new Promise(resolve => {
-        _this.page = 1;
-        _this.getDataInit();
-        resolve();
-      });
-    },
-    //上划加载更多
-    handleReachBottom() {
-      let _this = this;
-      return new Promise(resolve => {
-        if (this.pullUpLoadFlag) {
-          this.$vux.toast.show("没有更多了");
-          resolve();
-          return false;
-        } else {
-          _this.page++;
-          _this.getDataInit();
-          resolve();
-        }
-      });
-    },
     //方法：改动彩票类型
     change_type(_v) {
-      let _this = this;
-      this.type = _v;
-      this.page = 1;
-      this.changes_arrow();
-      this.lottery_type = _v.id;
+      console.log('_v===============',_v);
       //数据清空
+      var cvsdiv = document.getElementById("cvsDiv");
       this.openArr=[];
       this.cvsArr=[];
-      this.createTd=[];
-      var cvsdiv = document.getElementById("cvsDiv");
+      this.createTd=[];      
       this.trendData=''; 
       cvsdiv.innerHTML='';
+      let _this = this;
+      this.type = _v;
+      this.page = 1;      
+      this.lottery_type = _v.id;
+      this.changes_arrow();
       this.getDataInit();
     },
     handleBottomChange(status) {
