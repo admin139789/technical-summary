@@ -126,3 +126,16 @@ socket.send(参数);
 socket.close（）；
 ```
 
+##### 5.重新叙述open，message，send
+
+```
+1.open+send
+监听ws的开启
+进行的操作是发送数据给服务端,利用send方法
+```
+
+```
+2.message
+获得服务端的所有数据（包括自己的，还有其他人），说白就是可以共同看到所有人利用open+send发送的数据！！！
+```
+
