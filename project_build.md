@@ -826,4 +826,12 @@ var vConsole = new VConsole();
 
 在js写好函数，app.vue中 import进去，然后将this，传进来
 
-#### 
+### 22.vue实现图片懒加载
+
+#### <https://blog.csdn.net/twodogya/article/details/80223331>
+
+##### 23.v-model.trim
+
+自动去前后空格
+
+<https://blog.csdn.net/weixin_41796631/article/details/82950861>
