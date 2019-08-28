@@ -211,6 +211,8 @@ export default new Router({
 
 #### 8.axios（封装在  /src/assets/js/http.js  里面）
 
+axios.defaults.baseURL = Vue.prototype.urlRequest     ===》 用 /  则使用  axios 默认地址
+
 axios参数配置
 
 <https://blog.csdn.net/itkingone/article/details/81083597>
@@ -835,3 +837,60 @@ var vConsole = new VConsole();
 自动去前后空格
 
 <https://blog.csdn.net/weixin_41796631/article/details/82950861>
+
+#### 24.优化网站！！！！！！！！！！！！！！！！！！！！！！！！
+
+[https://gtmetrix.com](https://gtmetrix.com/)
+
+#### 25.前端调用原生方法
+
+```
+if (/android/i.test(navigator.userAgent)) {
+    try {
+        window.App.方法名(参数);
+    } 
+    catch (e) {
+        console.log(e)
+    }
+} 
+else if (/ios|iphone|ipod|pad/i.test(navigator.userAgent)) {
+    try {
+    	window.webkit.messageHandlers.方法名.postMessage(参数);
+    } 
+    catch (e) {
+    	console.log(e)
+    }
+}
+```
+
+#### 26.前端写方法给原生调用
+
+#### 27.修改组件
+
+```
+//记得  retun  出去
+Vue.$vux.loading.show = function (timeout) {
+  showFunc();
+  if(timeout == null) {
+    timeout = 1500;
+  }
+  if(timeout > 0) {
+    return setTimeout(()=>{
+        Vue.$vux.loading.hide();
+    }, timeout);
+  }
+  return 0;
+};
+```
+
+#### 28.修改git地址
+
+重新修改地址存在的问题
+
+<https://blog.csdn.net/u012145252/article/details/80628451>
+
+```
+git remote rm origin
+git remote add origin [url]  远程地址改变  可以用
+```
+

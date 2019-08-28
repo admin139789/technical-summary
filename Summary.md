@@ -424,3 +424,72 @@ downloadIamge(selector, name) {
 比如支付 ，客服，拿到第三方链接后，<iframe src='附上地址'></iframe>
 ```
 
+##### 17.loading延迟处理
+
+```
+let showFunc = Vue.$vux.loading.show;
+Vue.$vux.loading.show = function (timeout) {
+  showFunc();
+  if(timeout == null) {
+    timeout = 1500;
+  }
+  if(timeout > 0) {
+    return setTimeout(()=>{
+        Vue.$vux.loading.hide();
+    }, timeout);
+  }
+  return 0;
+};
+```
+
+##### 18.ios11以上处理ios点击卡顿问题
+
+##### 解决：去掉300s延迟
+
+```
+// 解决click点击300毫秒延时问题 （IOS11及以上无需处理）
+import FastClick from 'fastclick'；
+//ios11以上
+const device = navigator.userAgent.toLowerCase().match(/cpu iphone os (.*?) like mac os/)
+if (!device || parseInt(device[1]) < 11) {
+  FastClick.attach(document.body)
+}
+```
+
+##### 19.vue 项目中使用的px2rem插件，导致部分安卓机低版本 不显示1px 的border
+
+<https://blog.csdn.net/lucky___star/article/details/93379946>
+
+```
+//vue->bulid->vue-loader.config.js
+module.exports = {
+  postcss: function () {
+    return [px2rem({rootValue:37.5})];
+  }
+}
+```
+
+```
+//main.js
+//rem布局
+(function (doc, win) {
+  var docEl = doc.documentElement,
+    resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+    recalc = function () {
+      var clientWidth = docEl.clientWidth;
+      if (!clientWidth) return;
+      docEl.style.fontSize = clientWidth / 10 + 'px';
+    };
+  if (!doc.addEventListener) return;
+  win.addEventListener(resizeEvt, recalc, false);
+  doc.addEventListener('DOMContentLoaded', recalc, false);
+})(document, window);
+```
+
+##### 20.JPush 推送插件
+
+<https://www.cnblogs.com/larryNE/p/6068720.html>
+
+##### 21.查看自己网站的优化网站！！！！！！！！！！！！！！！！！！！
+
+[https://gtmetrix.com](https://gtmetrix.com/)
