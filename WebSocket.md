@@ -126,7 +126,9 @@ socket.send(参数);
 socket.close（）；
 ```
 
-##### 5.重新叙述open，message，send
+##### 5.重新叙述open，message，send！！！！！！！！！！！！！！（重点看）
+
+都要去监听！！！
 
 ```
 1.open+send
@@ -137,5 +139,10 @@ socket.close（）；
 ```
 2.message
 获得服务端的所有数据（包括自己的，还有其他人），说白就是可以共同看到所有人利用open+send发送的数据！！！
+```
+
+```
+send: 客户端->服务端
+message：服务端 -> 客户端
 ```
 

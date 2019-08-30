@@ -493,3 +493,7 @@ module.exports = {
 ##### 21.查看自己网站的优化网站！！！！！！！！！！！！！！！！！！！
 
 [https://gtmetrix.com](https://gtmetrix.com/)
+
+##### 22.每个vue的title
+
+ v-wechat-title指令
