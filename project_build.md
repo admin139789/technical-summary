@@ -894,3 +894,75 @@ git remote rm origin
 git remote add origin [url]  远程地址改变  可以用
 ```
 
+#### 29 fillder4 说明书
+
+详情看img/fillder4 说明书
+
+<https://blog.csdn.net/hust_twj/article/details/78985543> 修改数据
+
+<https://blog.csdn.net/updateallthetime/article/details/82498552>
+
+### 29.版本回退！！！
+
+<https://blog.csdn.net/weixin_42066185/article/details/82289059>
+
+<https://blog.csdn.net/qq_16605855/article/details/78988400>
+
+### 30.props校验
+
+```
+props: {
+    quickBtn: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    },
+    promptindex: {
+      type: Number/[Number,String],
+      default: function() {
+        return '';
+      }
+    },
+  },
+  
+  
+ props: {
+    // 基础类型检测 （`null` 意思是任何类型都可以）
+    propA: Number,
+    // 多种类型
+    propB: [String, Number],
+    // 必传且是字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 数字，有默认值
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 数组／对象的默认值应当由一个工厂函数返回
+    propE: {
+      type: Object,
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function (value) {
+        return value > 10
+      }
+    }
+  }
+});
+```
+
+#### 31.后台返回数据识别 \n
+
+```
+this.promptDesc = this.promptDesc.replace(/\\n/gm,"<br/>");
+再用  v-html 渲染
+```
+
