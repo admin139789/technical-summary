@@ -205,6 +205,12 @@ export default new Router({
  }
 ```
 
+meta！！！！！！！！！！！！！！！！！
+
+this.$route查看meta属性进行一些判断
+
+![](F:\technical_summary\img\fs.PNG)
+
 #### 7.main.js
 
 存放全局（需要共用）的东西！！！
@@ -910,7 +916,6 @@ git remote add origin [url]  远程地址改变  可以用
 
 ### 30.props校验
 
-```
 props: {
     quickBtn: {
       type: Array,
@@ -925,8 +930,7 @@ props: {
       }
     },
   },
-  
-  
+
  props: {
     // 基础类型检测 （`null` 意思是任何类型都可以）
     propA: Number,
@@ -957,12 +961,111 @@ props: {
     }
   }
 });
-```
 
 #### 31.后台返回数据识别 \n
 
 ```
 this.promptDesc = this.promptDesc.replace(/\\n/gm,"<br/>");
 再用  v-html 渲染
+```
+
+### 32.slot
+
+<https://blog.csdn.net/weixin_41646716/article/details/80450873>
+
+<https://www.cnblogs.com/vickylinj/p/9578455.html>
+
+```
+<template>
+	<div id="father">
+		我是父组件
+		<son>
+		<div class='one'>111</div>
+		<div class='second'>222</div>
+		</son>
+	</div>
+	
+
+</template>
+<script>
+import son from './slot_son.vue'
+export default{
+	data(){
+		return{
+
+		}
+	},
+	components:{
+		son
+	},
+	mounted(){
+		console.log('meta属性',this.$route)
+	}
+}
+</script>
+<style scoped>
+	.one{
+		color:red;
+	}
+	.second{
+		color:orange;
+	}
+</style>
+
+<template>
+	<div id="father">
+		我是子组件top
+		<slot></slot>
+		我是子组件second
+	</div>
+	
+
+</template>
+<script>
+export default{
+	data(){
+		return{
+
+		}
+	}
+}
+</script>
+<style scoped>
+</style>
+```
+
+```
+<template>
+	<div id="father">
+		我是父组件
+		<son>
+		<template slot='hhh' scope='kd'>
+			<div >{{kd.test}}</div>
+		</template>
+		</son>
+	</div>
+</template>
+
+<template>
+  <div class="child">
+
+    <h3>这里是子组件</h3>
+    // 作用域插槽
+    <slot  name='hhh' :test="list"></slot>
+  </div>
+</template>
+<script>
+ export default {
+    data(){
+      return {
+        list:''
+      }
+    },
+    mounted(){
+    	var res='开元通宝';
+    	this.list=res;
+    }
+}
+</script>
 ```
 
