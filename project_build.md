@@ -1069,3 +1069,21 @@ export default{
 </script>
 ```
 
+#### 30.悬浮出现阴影特效
+
+```
+.witkey-list-grid .item-wrap:hover {
+    border-top-color: transparent;
+    box-shadow: 0 0 10px 0 rgba(124,124,124,.26);
+}
+```
+
+#### 31.proxable
+
+<https://segmentfault.com/a/1190000014396546?utm_source=tag-newest>
+
+<https://blog.csdn.net/yunfeng482/article/details/8988397032.>
+
+### 32.this.$set
+
+<https://www.cnblogs.com/xuyxbiubiu/p/9968115.html>
