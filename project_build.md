@@ -916,6 +916,7 @@ git remote add origin [url]  远程地址改变  可以用
 
 ### 30.props校验
 
+```
 props: {
     quickBtn: {
       type: Array,
@@ -961,6 +962,25 @@ props: {
     }
   }
 });
+```
+
+```
+1.props:{
+    res:{
+        type:Object,//值类型
+        required:true,//父组件无传参过来
+        default: function(){
+            return {num:30}                 
+        }，//undefined的时候显示
+        validator: function (value) {
+    		return value >10
+    	}//条件限制，验证
+    }
+}
+2.props:['res']
+```
+
+修改props的值：先在本地定义变量 （data里面），然后赋值，再去修改
 
 #### 31.后台返回数据识别 \n
 
@@ -1082,8 +1102,75 @@ export default{
 
 <https://segmentfault.com/a/1190000014396546?utm_source=tag-newest>
 
-<https://blog.csdn.net/yunfeng482/article/details/8988397032.>
-
 ### 32.this.$set
 
 <https://www.cnblogs.com/xuyxbiubiu/p/9968115.html>
+
+https://www.cnblogs.com/mengff/p/8482867.html
+
+<https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/assign>
+
+### 33.逻辑分组件开发
+
+说起来容易做起来难，如何根据一个逻辑来划分一个组件？
+
+分解组件的第一种方法是***基于数据变化。如果数据在组件的一个部分中不断变化，而在其他部分中不变，那么变化的组件那部分应该单独抽取出来作为独立组件。***
+
+原因是如果您的数据/HTML在模板的一个部分中不断变化，则需要检查和更新整个组件。但是，如果将变化的HTML放入其自己的组件中，并使用props传入数据，则只有该组件在其props更改时才会更新。
+
+从逻辑上分解组件的另一种方法是***可重用性***。如果您拥有在整个应用程序中重复使用的HTML，图形或功能，如按钮，复选框，徽标动画，号召性用语或具有简单更改文本的图形 - 这将是一个很好的候选，抽取到一个新的组件，可以被重用。可重用组件具有易于维护的隐藏优势，因为您只需要更改一个组件，而不必在代码库中找到替换和更改多个地方。
+
+### 34.异步加载组件
+
+```
+components: {
+    searchSearch: function (resolve) {
+    //异步组件写法
+    require(['./service-search.vue'], resolve)
+    }
+}
+```
+
+### 35.图片懒加载
+
+<https://blog.csdn.net/hj7jay/article/details/55044700>
+
+<https://juejin.im/post/5d797faa5188254b6d0c676d>
+
+#### 36.ES6
+
+<https://juejin.im/post/5c55c31c51882562ea721434>
+
+```
+let a = [1, 2, 3]
+let b = [...a] // b是一个新的数组，内容和a一样 [1, 2, 3]
+let c = [...a, 4, 5, 6] //合并 [1,2,3,4,5,6]
+
+```
+
+**注意拓展操作符：数组就为数组，对象就为对象 ，不要乱写|！！！！！！！！！！**
+
+```
+const years = [2016, 2017, 2017, 2018, 2018, 2019]
+
+// set构造函数的参数是一个array
+const distinctYears = [...new Set(years)] // [2016, 2017, 2018, 2019]
+
+```
+
+```
+// 生成唯一随机字符串，可以指定长度
+
+function generateRandom(length) {
+	let radom13chars = function () {
+		return Math.random().toString(16).substring(2, 15)
+	}
+	let loops = Math.ceil(length / 13)
+	return new Array(loops).fill(radom13chars).reduce((string, func) => {
+		return string + func()
+	}, '').substring(0, length)
+}
+
+generateRandom(8) // "03836a49"
+```
+
