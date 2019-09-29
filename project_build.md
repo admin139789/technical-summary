@@ -1174,3 +1174,106 @@ function generateRandom(length) {
 generateRandom(8) // "03836a49"
 ```
 
+## 37.mixin混用！！！
+
+<https://www.cnblogs.com/bai-xue/p/10190668.html>
+
+<https://www.jianshu.com/p/1bfd582da93e>
+
+还有一个特点是：改变mixins里面的变量，是不会影响其他地方的变量（注意这跟vuex是不同的）
+
+#### 38.excel上传
+
+```
+importfxx(obj) {
+      let _this = this;
+      let inputDOM = this.$refs.inputer;
+      // console.log(111,this.$refs.inputer.files[0])
+      // 通过DOM取文件数据
+      this.file = event.currentTarget.files[0];
+      var rABS = false; //是否将文件读取为二进制字符串
+      var f = this.file;
+      var reader = new FileReader();
+      FileReader.prototype.readAsBinaryString = function(f) {
+        var binary = "";
+        var rABS = false; //是否将文件读取为二进制字符串
+        var pt = this;
+        var wb; //读取完成的数据
+        var outdata;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var bytes = new Uint8Array(reader.result);
+          var length = bytes.byteLength;
+          for(var i = 0; i < length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          var XLSX = require('xlsx');
+          if(rABS) {
+            wb = XLSX.read(btoa(fixdata(binary)), { //手动转化
+              type: 'base64'
+            });    
+          } else {
+            wb = XLSX.read(binary, {
+              type: 'binary'
+            });
+          }
+          outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+          //outdata就是你想要的东西
+          _this.sels=outdata;
+          console.log('outdata',outdata, 'sels',_this.sels)
+          console.log(_this.$refs.inputer.files[0],'======wb======',wb)
+          // 进行ajax请求===========
+          _this.$http({ 
+                  headers:{ 'Content-Type': 'application/json' },
+                  method: 'post',
+                  url: '/api/server-sound/lot/imported', 
+                  data:excelArr
+              })
+              .then(res => { 
+                  _this.$alert('导入成功','提示')
+              })
+          })
+
+      }
+      reader.readAsArrayBuffer(f);
+      console.log(f,'hhhh')
+      }
+      if(rABS) {
+        reader.readAsArrayBuffer(f);
+      } else {
+        reader.readAsBinaryString(f);
+      }
+      console.log(f,'66')
+      alert('导入成功')
+    },
+```
+
+```
+// 导出 （前提后端返回的是文件）
+educe(facilId) {
+      console.log(facilId,'daochu')
+      let _this = this
+      _this.loading1 = true
+      var facilityId = facilId
+       let params = {
+         id:JSON.parse(JSON.stringify(facilityId))
+       };
+      this.$http.get('/api/server-sound/lot/exported?'+this.qs.stringify(params),{responseType: 'blob'})
+      .then(res=>{
+        var URL ='/api/server-sound/lot/exported?id='+facilityId
+        window.open(URL,"_self");
+        _this.loading1 = false
+      })
+      .catch(error=>{
+        console.log('error')
+      })
+    },
+```
+
+#### 39.watch
+
+![](F:\technical_summary\img\watch.PNG)
+
+#### 40.监听生命周期 @hook
+
+![](F:\technical_summary\img\hook.PNG)
