@@ -1277,3 +1277,7 @@ educe(facilId) {
 #### 40.监听生命周期 @hook
 
 ![](F:\technical_summary\img\hook.PNG)
+
+### 41.vue.plugin
+
+<https://www.jianshu.com/p/d7e6d0344390>
