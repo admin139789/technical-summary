@@ -497,3 +497,7 @@ module.exports = {
 ##### 22.每个vue的title
 
  v-wechat-title指令
+
+##### 23.中文乱码
+
+decodeURI（）方法转化一下即可
