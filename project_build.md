@@ -409,6 +409,8 @@ export function encryption(str){ //加密
 
 <https://www.cnblogs.com/lanchar/p/6894167.html>
 
+https://www.jianshu.com/p/d7e6d0344390
+
 ```
 //2.eg: 封装一个  slid  组件
 
@@ -1281,3 +1283,9 @@ educe(facilId) {
 ### 41.vue.plugin！！！！！！！！！！！！！！！！！
 
 <https://www.jianshu.com/p/d7e6d0344390>
+
+#### 42.打断点debugger！！！！！！
+
+![](F:\technical_summary\img\a65e1cbf0b882aa9ccde73a271448ef.png)
+
+![](F:\technical_summary\img\b0040c457cb8ec2e23cd28bff4cf15d.png)
